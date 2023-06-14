@@ -1,4 +1,8 @@
-import { createChart, ColorType, CandlestickData } from "lightweight-charts";
+import {
+  createChart,
+  ColorType,
+  type CandlestickData,
+} from "lightweight-charts";
 import React, { useEffect, useRef } from "react";
 
 type ChartComponentProps = {
@@ -13,7 +17,7 @@ type ChartComponentProps = {
 };
 
 export const ChartComponent = ({ data, colors }: ChartComponentProps) => {
-  const chartContainerRef = useRef();
+  const chartContainerRef = useRef<HTMLDivElement>(null);
   const defaultColors = {
     backgroundColor: "white",
     lineColor: "#2962FF",
@@ -26,10 +30,12 @@ export const ChartComponent = ({ data, colors }: ChartComponentProps) => {
 
   useEffect(() => {
     const handleResize = () => {
-      chart.applyOptions({ width: chartContainerRef.current.clientWidth });
+      chart.applyOptions({
+        width: chartContainerRef?.current?.clientWidth as number,
+      });
     };
 
-    const chart = createChart(chartContainerRef.current, {
+    const chart = createChart(chartContainerRef?.current ?? "", {
       layout: {
         background: {
           type: ColorType.Solid,
@@ -37,7 +43,7 @@ export const ChartComponent = ({ data, colors }: ChartComponentProps) => {
         },
         textColor: chartColors.textColor,
       },
-      width: chartContainerRef.current.clientWidth,
+      width: chartContainerRef?.current?.clientWidth,
       height: 300,
     });
     chart.timeScale().fitContent();
