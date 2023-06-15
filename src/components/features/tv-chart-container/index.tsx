@@ -2,6 +2,7 @@ import {
   createChart,
   ColorType,
   type CandlestickData,
+  type LineData,
 } from "lightweight-charts";
 import React, { useEffect, useRef } from "react";
 
@@ -14,16 +15,17 @@ type ChartComponentProps = {
     areaTopColor?: string;
     areaBottomColor?: string;
   };
+  predictions?: LineData[];
 };
 
-export const ChartComponent = ({ data, colors }: ChartComponentProps) => {
+export const ChartComponent = ({ data, colors, predictions }: ChartComponentProps) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const defaultColors = {
     backgroundColor: "white",
     lineColor: "#2962FF",
     textColor: "black",
-    areaTopColor: "#2962FF",
-    areaBottomColor: "rgba(41, 98, 255, 0.28)",
+    redStickColor: "#FF1744",
+    greenStickColor: "#00E676",
   };
 
   const chartColors = { ...defaultColors, ...colors };
@@ -48,12 +50,17 @@ export const ChartComponent = ({ data, colors }: ChartComponentProps) => {
     });
     chart.timeScale().fitContent();
 
-    const newSeries = chart.addCandlestickSeries({
-      upColor: chartColors.lineColor,
-      downColor: chartColors.areaTopColor,
+    const newCandles = chart.addCandlestickSeries({
+      upColor: chartColors.greenStickColor,
+      downColor: chartColors.redStickColor,
       wickColor: chartColors.areaBottomColor,
     });
-    newSeries.setData(data);
+    newCandles.setData(data);
+
+    const newSeries = chart.addLineSeries({
+      color: chartColors.lineColor,
+    });
+    newSeries.setData(predictions ?? []);
 
     window.addEventListener("resize", handleResize);
 

@@ -75,3 +75,19 @@ model Predictions {
     prediction    Float
     interval      String
 }
+
+model HistoricalData {
+    id            String   @id @default(cuid())
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    symbol        String
+    openTimestamp BigInt
+    openPrice     Float
+    highPrice     Float
+    lowPrice      Float
+    closePrice    Float
+    volume        Float
+    interval      String
+
+    @@unique([openTimestamp, interval, symbol])
+}

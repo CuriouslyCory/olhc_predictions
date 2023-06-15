@@ -7,6 +7,7 @@ const config = {
     {
       extends: [
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:prettier/recommended",
       ],
       files: ["*.ts", "*.tsx"],
       parserOptions: {
