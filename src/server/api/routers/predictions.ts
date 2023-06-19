@@ -1,3 +1,4 @@
+import { Predictions } from "@prisma/client";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
@@ -7,7 +8,7 @@ type GetAllWhereClause = {
 };
 
 export const predictionsRouter = createTRPCRouter({
-  getAll: publicProcedure
+  getLatestForInterval: publicProcedure
     .input(
       z.object({
         skip: z.number(),
@@ -29,21 +30,56 @@ export const predictionsRouter = createTRPCRouter({
 
       const allPredictions = await ctx.prisma.predictions.findMany({
         where: whereClause,
-        orderBy: [{ openTimestamp: "desc"}, {updatedAt: "desc" }],
+        orderBy: [{ openTimestamp: "desc" }, { updatedAt: "desc" }],
       });
 
-      const latestPredictionsMap = new Map();
+      const latestPredictionsMap = new Map<string, Predictions>();
 
       for (const prediction of allPredictions) {
         const key = `${prediction.symbol}-${prediction.openTimestamp}-${prediction.interval}`;
-        
-        if (!latestPredictionsMap.has(key) || +latestPredictionsMap.get(key).updatedAt.toString() < +prediction.updatedAt.toString()) {
+
+        if (
+          !latestPredictionsMap.has(key) ||
+          (latestPredictionsMap.has(key) &&
+            (latestPredictionsMap.get(key)?.updatedAt.getTime() ?? 0) <
+              prediction.updatedAt.getTime())
+        ) {
+          console.log("Adding prediction to map");
+          console.log(prediction.openTimestamp.toString());
           latestPredictionsMap.set(key, prediction);
         }
+        console.log(prediction);
       }
 
       const latestPredictions = Array.from(latestPredictionsMap.values());
 
       return latestPredictions.slice(input.skip, input.skip + input.take);
+    }),
+  getAll: publicProcedure
+    .input(
+      z.object({
+        skip: z.number(),
+        take: z.number(),
+        symbol: z.string().optional(),
+        interval: z.string().optional(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const whereClause: GetAllWhereClause = {};
+
+      if (input.symbol) {
+        whereClause.symbol = input.symbol;
+      }
+
+      if (input.interval) {
+        whereClause.interval = input.interval;
+      }
+
+      return ctx.prisma.predictions.findMany({
+        where: whereClause,
+        orderBy: [{ openTimestamp: "desc" }, { updatedAt: "desc" }],
+        skip: input.skip,
+        take: input.take,
+      });
     }),
 });
