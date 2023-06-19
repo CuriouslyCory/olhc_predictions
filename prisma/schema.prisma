@@ -77,17 +77,21 @@ model Predictions {
 }
 
 model HistoricalData {
-    id            String   @id @default(cuid())
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
-    symbol        String
-    openTimestamp BigInt
-    openPrice     Float
-    highPrice     Float
-    lowPrice      Float
-    closePrice    Float
-    volume        Float
-    interval      String
+    id                    String   @id @default(cuid())
+    createdAt             DateTime @default(now())
+    updatedAt             DateTime @updatedAt
+    symbol                String
+    interval              String
+    openTimestamp         BigInt
+    openPrice             Float
+    highPrice             Float
+    lowPrice              Float
+    closePrice            Float
+    volume                Float
+    quoteAssetVolume      Float    @default(0)
+    trades                Int      @default(0)
+    takerBaseAssetVolume  Float    @default(0)
+    takerQuoteAssetVolume Float    @default(0)
 
     @@unique([openTimestamp, interval, symbol])
 }

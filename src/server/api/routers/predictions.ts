@@ -28,8 +28,6 @@ export const predictionsRouter = createTRPCRouter({
       }
 
       const allPredictions = await ctx.prisma.predictions.findMany({
-        take: input.take,
-        skip: input.skip,
         where: whereClause,
         orderBy: [{ openTimestamp: "desc"}, {updatedAt: "desc" }],
       });
@@ -39,7 +37,7 @@ export const predictionsRouter = createTRPCRouter({
       for (const prediction of allPredictions) {
         const key = `${prediction.symbol}-${prediction.openTimestamp}-${prediction.interval}`;
         
-        if (!latestPredictionsMap.has(key)) {
+        if (!latestPredictionsMap.has(key) || +latestPredictionsMap.get(key).updatedAt.toString() < +prediction.updatedAt.toString()) {
           latestPredictionsMap.set(key, prediction);
         }
       }

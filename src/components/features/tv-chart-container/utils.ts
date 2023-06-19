@@ -20,19 +20,17 @@ export const historicalDataToCandle = (data?: HistoricalData[]): CandlestickData
 
 
 export const predictionsToChartData = (data?: Predictions[]): LineData[] => {
-    console.log(data);
     if(!data) return [];
     const formattedData = data.map((d) => {
-        console.log(new Date(+d.openTimestamp.toString() + intervalToSeconds(d.interval) * 1000) );
+        console.log(d.openTimestamp.toString())
         return {
-        time: (new Date(+d.openTimestamp.toString() + intervalToSeconds(d.interval) * 1000)).getTime() / 1000 as UTCTimestamp,
-        value: d.prediction,
+            time: (new Date(+d.openTimestamp.toString()).getTime()) / 1000 as UTCTimestamp,
+            value: d.prediction,
         };
     })
     .sort((a, b) => {
         return new Date(a.time).getTime() - new Date(b.time).getTime();
     });
-    console.log(formattedData);
     return formattedData;
 }
 
