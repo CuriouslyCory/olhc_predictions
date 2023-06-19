@@ -50,12 +50,6 @@ const Home: NextPage = () => {
     interval: selectedInterval,
   });
 
-  useEffect(() => {
-    console.log(
-      predictions.data?.map((prediction) => prediction.openTimestamp)
-    );
-  }, [predictions.data]);
-
   return (
     <>
       <Head>

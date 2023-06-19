@@ -44,11 +44,8 @@ export const predictionsRouter = createTRPCRouter({
             (latestPredictionsMap.get(key)?.updatedAt.getTime() ?? 0) <
               prediction.updatedAt.getTime())
         ) {
-          console.log("Adding prediction to map");
-          console.log(prediction.openTimestamp.toString());
           latestPredictionsMap.set(key, prediction);
         }
-        console.log(prediction);
       }
 
       const latestPredictions = Array.from(latestPredictionsMap.values());
