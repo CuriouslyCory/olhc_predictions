@@ -39,13 +39,13 @@ const Home: NextPage = () => {
   const intervals = ["1d", "3d", "1w"];
   const predictions = api.predictions.getLatestForInterval.useQuery({
     skip: 0,
-    take: 100,
+    take: 90,
     symbol: selectedSymbol,
     interval: selectedInterval,
   });
   const historicalData = api.historicalData.getRecent.useQuery({
     skip: 0,
-    take: 200,
+    take: 90,
     symbol: selectedSymbol,
     interval: selectedInterval,
   });
